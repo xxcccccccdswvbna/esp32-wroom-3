@@ -1,0 +1,19 @@
+globals:
+  - id: pkt_1
+    type: std::vector<uint8_t>
+    initial_value: 'std::vector<uint8_t>{}'
+  - id: pkt_2
+    type: std::vector<uint8_t>
+    initial_value: 'std::vector<uint8_t>{}'
+  - id: last_pkt_1
+    type: std::vector<uint8_t>
+    initial_value: 'std::vector<uint8_t>{}'
+  - id: last_pkt_2
+    type: std::vector<uint8_t>
+    initial_value: 'std::vector<uint8_t>{}'
+  - id: current_target
+    type: uint8_t
+    initial_value: '0'
+  - id: is_updating_from_tracker
+    type: bool
+    initial_value: 'false'
