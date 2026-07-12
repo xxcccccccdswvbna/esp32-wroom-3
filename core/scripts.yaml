@@ -8,7 +8,9 @@ script:
   - id: ble_process_queue
     mode: queued
     then:
-      - lambda: !include data/packets.yaml
+      # 【核心修复】：加上 ../ 退回根目录
+      - lambda: !include ../data/packets.yaml
+      
       - lambda: |-
           if (id(pkt_1) == id(last_pkt_1) && id(pkt_2) == id(last_pkt_2)) {
             ESP_LOGD("V2_CORE", "Duplicate packet ignored.");
