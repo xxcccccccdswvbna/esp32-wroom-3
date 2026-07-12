@@ -1,0 +1,38 @@
+script:
+  - id: debounce_timer
+    mode: restart
+    then:
+      - delay: 150ms 
+      - script.execute: ble_process_queue
+
+  - id: ble_process_queue
+    mode: queued
+    then:
+      - lambda: !include data/packets.yaml
+      - lambda: |-
+          if (id(pkt_1) == id(last_pkt_1) && id(pkt_2) == id(last_pkt_2)) {
+            ESP_LOGD("V2_CORE", "Duplicate packet ignored.");
+            return;
+          }
+      - script.execute: ble_send_repeat
+
+  - id: ble_send_repeat
+    mode: restart
+    then:
+      - lambda: 'id(ble_server).set_manufacturer_data(id(pkt_1));'
+      - delay: 40ms
+      - lambda: 'id(ble_server).set_manufacturer_data(id(pkt_2));'
+      - delay: 40ms
+      - lambda: 'id(ble_server).set_manufacturer_data(id(pkt_1));'
+      - delay: 40ms
+      - lambda: 'id(ble_server).set_manufacturer_data(id(pkt_2));'
+      - delay: 40ms
+      - lambda: 'id(ble_server).set_manufacturer_data(id(pkt_1));'
+      - delay: 40ms
+      - lambda: 'id(ble_server).set_manufacturer_data(id(pkt_2));'
+      - delay: 100ms
+      - lambda: 'id(ble_server).set_manufacturer_data({});'
+      - lambda: |-
+          id(last_pkt_1) = id(pkt_1);
+          id(last_pkt_2) = id(pkt_2);
+          ESP_LOGI("V2_CORE", "BLE Send Completed.");
