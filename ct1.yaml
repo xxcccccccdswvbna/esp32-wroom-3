@@ -1,0 +1,64 @@
+substitutions:
+  dev_name: "ct1"
+  friendly_name: "CT1 BLE Gateway"
+
+esphome:
+  name: ${dev_name}
+  friendly_name: ${friendly_name}
+  on_boot:
+    priority: 600.0
+    then:
+      - light.turn_on: blue_led
+      - light.turn_on: white_led
+
+esp32:
+  board: esp32dev
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+
+logger:
+  baud_rate: 0
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_encryption_key
+  on_client_connected:
+    - script.stop: offline_flash
+    - light.turn_off: white_led
+    - light.turn_off: blue_led
+  on_client_disconnected:
+    - script.execute: offline_flash
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+captive_portal:
+
+packages:
+  # 基础系统
+  base_wifi: !include base/wifi.yaml
+  base_web: !include base/web.yaml
+  base_sensors: !include base/sensors.yaml
+  base_text_sensors: !include base/text_sensors.yaml
+  base_outputs: !include base/outputs.yaml
+  base_lights: !include base/lights.yaml
+  base_physical_keys: !include base/physical_keys.yaml
+  base_globals_extra: !include base/globals_extra.yaml
+  base_offline_script: !include base/offline_script.yaml
+  base_mqtt: !include base/mqtt.yaml
+  
+  # V2 核心架构 (顺序很重要：globals -> scripts -> state -> buttons)
+  core_globals: !include core/globals.yaml
+  core_scripts: !include core/scripts.yaml
+  core_state: !include core/state.yaml
+  core_buttons: !include core/buttons.yaml
+  
+  # BLE 模块
+  ble_core: !include ble/core.yaml
+  ble_tracker: !include ble/tracker.yaml
+  ble_dev3: !include ble/dev3.yaml
