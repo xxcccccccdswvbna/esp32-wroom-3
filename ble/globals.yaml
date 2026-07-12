@@ -1,19 +1,120 @@
 globals:
+  #
+  # 当前广播数据
+  #
   - id: pkt_1
     type: std::vector<uint8_t>
-    initial_value: 'std::vector<uint8_t>{}'
+    restore_value: no
+
   - id: pkt_2
     type: std::vector<uint8_t>
-    initial_value: 'std::vector<uint8_t>{}'
-  - id: last_pkt_1
-    type: std::vector<uint8_t>
-    initial_value: 'std::vector<uint8_t>{}'
-  - id: last_pkt_2
-    type: std::vector<uint8_t>
-    initial_value: 'std::vector<uint8_t>{}'
-  - id: current_target
-    type: uint8_t
-    initial_value: '0'
-  - id: is_updating_from_tracker
+    restore_value: no
+
+  #
+  # BLE发送状态
+  #
+  - id: ble_busy
     type: bool
-    initial_value: 'false'
+    restore_value: no
+    initial_value: "false"
+
+  - id: ble_queue_pending
+    type: bool
+    restore_value: no
+    initial_value: "false"
+
+  - id: ble_retry
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  - id: ble_max_retry
+    type: int
+    restore_value: no
+    initial_value: "2"
+
+  #
+  # 当前命令
+  #
+  - id: current_device
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  - id: current_command
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  - id: current_value
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  #
+  # 命令时间
+  #
+  - id: last_cmd_time
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+  - id: last_ble_send
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+  #
+  # 统计信息
+  #
+  - id: send_count
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+  - id: success_count
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+  - id: retry_count
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+  #
+  # 当前广播包长度
+  #
+  - id: pkt1_len
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  - id: pkt2_len
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  #
+  # Scheduler状态
+  #
+  - id: scheduler_running
+    type: bool
+    restore_value: no
+    initial_value: "false"
+
+  #
+  # Queue状态
+  #
+  - id: queue_size
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+  #
+  # 防止连续广播
+  #
+  - id: cooldown_until
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
