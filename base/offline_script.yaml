@@ -1,0 +1,7 @@
+script:
+  - id: offline_flash
+    mode: restart
+    then:
+      - while:
+          condition: { lambda: 'return true;' }
+          then: [ { light.toggle: white_led }, { delay: 500ms } ]
