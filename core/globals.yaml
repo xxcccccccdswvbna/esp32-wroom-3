@@ -17,3 +17,7 @@ globals:
   - id: is_updating_from_tracker
     type: bool
     initial_value: 'false'
+  # 【新增】用于在 set_action 中传递新值给查表逻辑
+  - id: pending_state_value
+    type: std::string
+    initial_value: '""'
