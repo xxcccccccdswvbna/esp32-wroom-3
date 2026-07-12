@@ -1,0 +1,60 @@
+select:
+  - platform: template
+    name: "Dev1 Light Brightness"
+    id: state_dev1_brt
+    options: ["0%", "20%", "40%", "50%", "60%", "80%", "100%"]
+    optimistic: true
+    set_action:
+      - if:
+          condition: { lambda: 'return !id(is_updating_from_tracker);' }
+          then: [ { lambda: 'id(current_target) = 1;' }, { script.execute: debounce_timer } ]
+
+  - platform: template
+    name: "Dev1 Light Color Temp"
+    id: state_dev1_ct
+    options: ["2700K", "3650K", "4600K", "5550K", "6500K"]
+    optimistic: true
+    set_action:
+      - if:
+          condition: { lambda: 'return !id(is_updating_from_tracker);' }
+          then: [ { lambda: 'id(current_target) = 2;' }, { script.execute: debounce_timer } ]
+
+  - platform: template
+    name: "Dev1 Fan Speed"
+    id: state_dev1_fan
+    options: ["关", "开", "1 档", "2 档", "3 档", "4 档", "5 档", "6 档"]
+    optimistic: true
+    set_action:
+      - if:
+          condition: { lambda: 'return !id(is_updating_from_tracker);' }
+          then: [ { lambda: 'id(current_target) = 3;' }, { script.execute: debounce_timer } ]
+
+  - platform: template
+    name: "Dev2 Light Brightness"
+    id: state_dev2_brt
+    options: ["0%", "20%", "40%", "50%", "60%", "80%", "100%"]
+    optimistic: true
+    set_action:
+      - if:
+          condition: { lambda: 'return !id(is_updating_from_tracker);' }
+          then: [ { lambda: 'id(current_target) = 4;' }, { script.execute: debounce_timer } ]
+
+  - platform: template
+    name: "Dev2 Light Color Temp"
+    id: state_dev2_ct
+    options: ["2700K", "3500K", "6500K"]
+    optimistic: true
+    set_action:
+      - if:
+          condition: { lambda: 'return !id(is_updating_from_tracker);' }
+          then: [ { lambda: 'id(current_target) = 5;' }, { script.execute: debounce_timer } ]
+
+  - platform: template
+    name: "Dev2 Fan Speed"
+    id: state_dev2_fan
+    options: ["关", "开", "1 档", "2 档", "3 档", "4 档", "5 档", "6 档"]
+    optimistic: true
+    set_action:
+      - if:
+          condition: { lambda: 'return !id(is_updating_from_tracker);' }
+          then: [ { lambda: 'id(current_target) = 6;' }, { script.execute: debounce_timer } ]
