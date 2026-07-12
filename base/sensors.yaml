@@ -1,0 +1,20 @@
+sensor:
+  - platform: uptime
+    name: Uptime
+  - platform: internal_temperature
+    name: "ESP32 Chip Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    icon: mdi:thermometer-chip
+    update_interval: 60s
+  - platform: wifi_signal
+    name: "WiFi Signal Strength"
+    id: wifi_signal_db
+    update_interval: 60s
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    icon: mdi:wifi-strength-4
