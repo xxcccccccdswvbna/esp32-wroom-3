@@ -1,0 +1,9 @@
+globals:
+  - id: do_factory_reset
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: safe_mode_tap_count
+    type: int
+    restore_value: no
+    initial_value: '0'
