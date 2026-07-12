@@ -1,0 +1,71 @@
+name: Build & Release ESPHome Gateway
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    paths: [ "**/*.yaml", "**/*.yml" ]
+permissions:
+  contents: write
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.find_files.outputs.files }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 查找主配置文件
+        id: find_files
+        run: |
+          FILES=$(find . -maxdepth 1 -name "*.yaml" ! -name "secrets.yaml" | sed 's|^\./||' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          if [ "$FILES" = "[]" ] || [ -z "$FILES" ]; then echo "❌ 未找到主配置文件！"; exit 1; fi
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+  build:
+    needs: detect
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        yaml-file: ${{ fromJson(needs.detect.outputs.files) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 生成 secrets.yaml
+        run: |
+          cat > secrets.yaml << EOF
+          wifi_ssid: "${{ secrets.WIFI_SSID }}"
+          wifi_password: "${{ secrets.WIFI_PASSWORD }}"
+          api_encryption_key: "${{ secrets.API_KEY }}"
+          ota_password: "${{ secrets.OTA_PASSWORD }}"
+          mqtt_broker: "${{ secrets.MQTT_BROKER }}"
+          mqtt_username: "${{ secrets.MQTT_USERNAME }}"
+          mqtt_password: "${{ secrets.MQTT_PASSWORD }}"
+          EOF
+      - name: 编译 ESPHome
+        uses: esphome/build-action@v6
+        with:
+          yaml-file: ${{ matrix.yaml-file }}
+          version: latest
+      - name: 收集固件
+        run: |
+          mkdir -p output
+          find .esphome/build -name "*.bin" -type f -exec cp {} output/ \;
+          DEVICE_NAME=$(echo "${{ matrix.yaml-file }}" | sed 's/\.yaml$//')
+          find .esphome/build -name "manifest.json" -type f -exec cp {} "output/${DEVICE_NAME}-manifest.json" \;
+      - name: 生成版本号
+        id: version
+        run: |
+          TIMESTAMP=$(date +'%Y%m%d-%H%M')
+          SHORT_SHA=${GITHUB_SHA:0:7}
+          DEVICE_NAME=$(echo "${{ matrix.yaml-file }}" | sed 's/\.yaml$//')
+          TAG="v${DEVICE_NAME}-${TIMESTAMP}-${SHORT_SHA}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "device=$DEVICE_NAME" >> $GITHUB_OUTPUT
+      - name: 发布 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "🔧 ${{ steps.version.outputs.device }} Build"
+          files: |
+            output/*.bin
+            output/*-manifest.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
