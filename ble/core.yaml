@@ -1,0 +1,9 @@
+esp32_ble:
+  io_capability: none
+  enable_on_boot: true
+esp32_ble_server:
+  id: ble_server
+  manufacturer_data: []
+bluetooth_proxy:
+  active: true
+  cache_services: true
