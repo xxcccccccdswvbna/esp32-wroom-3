@@ -1,0 +1,24 @@
+binary_sensor:
+  - platform: template
+    name: "Dev3 Light Power"
+    id: dev3_power
+    device_class: light
+    icon: mdi:ceiling-light
+  - platform: template
+    name: "Dev3 Fan Running"
+    id: dev3_fan_running
+    device_class: running
+    icon: mdi:fan
+sensor:
+  - platform: template
+    name: "Dev3 Fan Speed"
+    id: dev3_fan_speed
+    unit_of_measurement: "档"
+    accuracy_decimals: 0
+    icon: mdi:numeric
+  - platform: template
+    name: "Dev3 Brightness"
+    id: dev3_brightness
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    icon: mdi:brightness-percent
