@@ -1,1 +1,11 @@
-
+output:
+  - platform: gpio
+    id: blue_led_out
+    pin:
+      number: GPIO27
+      inverted: true
+  - platform: gpio
+    id: white_led_out
+    pin:
+      number: GPIO26
+      inverted: true
