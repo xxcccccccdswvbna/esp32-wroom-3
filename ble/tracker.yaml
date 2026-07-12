@@ -1,0 +1,29 @@
+esp32_ble_tracker:
+  scan_parameters:
+    interval: 1000ms
+    window: 50ms
+    active: false
+  on_ble_manufacturer_data_advertise:
+    - manufacturer_id: "134D"
+      then:
+        - lambda: |-
+            if (x.size() < 20) return;
+            if (x[0] != 0x21) return;
+            if (x[2]!=0x48 || x[3]!=0x80 || x[4]!=0x27 || x[5]!=0x70 || x[6]!=0x00 || x[7]!=0x00) return;
+            
+            bool power_on = (x[9] == 0x01);
+            bool fan_running = !(x[18] & 0x01);
+            uint8_t fan_gear_idx = x[19];
+            uint16_t brt_raw = (x[14] << 8) | x[15];
+            int brt_pct = (brt_raw == 0xFFFF) ? 100 : (int)(brt_raw / 655.35);
+            
+            id(is_updating_from_tracker) = true;
+            id(dev3_power).publish_state(power_on);
+            id(dev3_fan_running).publish_state(fan_running);
+            id(dev3_fan_speed).publish_state(fan_running ? (fan_gear_idx + 1) : 0);
+            id(dev3_brightness).publish_state(brt_pct);
+            id(is_updating_from_tracker) = false;
+            
+            id(mqtt_client).publish("light3002/up", power_on ? "on" : "off");
+            if (fan_running) id(mqtt_client).publish("fan3003/up", std::to_string(fan_gear_idx + 1).c_str());
+            else id(mqtt_client).publish("fan3003/up", "0");
