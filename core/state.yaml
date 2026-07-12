@@ -7,7 +7,10 @@ select:
     set_action:
       - if:
           condition: { lambda: 'return !id(is_updating_from_tracker);' }
-          then: [ { lambda: 'id(current_target) = 1;' }, { script.execute: debounce_timer } ]
+          then: 
+            - lambda: 'id(pending_state_value) = x;'  # 【新增】先保存新值
+            - lambda: 'id(current_target) = 1;'
+            - script.execute: debounce_timer
 
   - platform: template
     name: "Dev1 Light Color Temp"
@@ -17,7 +20,10 @@ select:
     set_action:
       - if:
           condition: { lambda: 'return !id(is_updating_from_tracker);' }
-          then: [ { lambda: 'id(current_target) = 2;' }, { script.execute: debounce_timer } ]
+          then: 
+            - lambda: 'id(pending_state_value) = x;'
+            - lambda: 'id(current_target) = 2;'
+            - script.execute: debounce_timer
 
   - platform: template
     name: "Dev1 Fan Speed"
@@ -27,7 +33,10 @@ select:
     set_action:
       - if:
           condition: { lambda: 'return !id(is_updating_from_tracker);' }
-          then: [ { lambda: 'id(current_target) = 3;' }, { script.execute: debounce_timer } ]
+          then: 
+            - lambda: 'id(pending_state_value) = x;'
+            - lambda: 'id(current_target) = 3;'
+            - script.execute: debounce_timer
 
   - platform: template
     name: "Dev2 Light Brightness"
@@ -37,7 +46,10 @@ select:
     set_action:
       - if:
           condition: { lambda: 'return !id(is_updating_from_tracker);' }
-          then: [ { lambda: 'id(current_target) = 4;' }, { script.execute: debounce_timer } ]
+          then: 
+            - lambda: 'id(pending_state_value) = x;'
+            - lambda: 'id(current_target) = 4;'
+            - script.execute: debounce_timer
 
   - platform: template
     name: "Dev2 Light Color Temp"
@@ -47,7 +59,10 @@ select:
     set_action:
       - if:
           condition: { lambda: 'return !id(is_updating_from_tracker);' }
-          then: [ { lambda: 'id(current_target) = 5;' }, { script.execute: debounce_timer } ]
+          then: 
+            - lambda: 'id(pending_state_value) = x;'
+            - lambda: 'id(current_target) = 5;'
+            - script.execute: debounce_timer
 
   - platform: template
     name: "Dev2 Fan Speed"
@@ -57,4 +72,7 @@ select:
     set_action:
       - if:
           condition: { lambda: 'return !id(is_updating_from_tracker);' }
-          then: [ { lambda: 'id(current_target) = 6;' }, { script.execute: debounce_timer } ]
+          then: 
+            - lambda: 'id(pending_state_value) = x;'
+            - lambda: 'id(current_target) = 6;'
+            - script.execute: debounce_timer
